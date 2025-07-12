@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.mypy_cache/
+.pytest_cache/
+.venv/
+venv/
+
+# Data files
+*.csv
+*.xlsx
+*.parquet
+
+# Environment variables
+.env
+
+# IDE and OS files
+.DS_Store
+Thumbs.db
+.vscode/
