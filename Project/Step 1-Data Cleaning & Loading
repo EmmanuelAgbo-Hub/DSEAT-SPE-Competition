@@ -1,0 +1,63 @@
+import pandas as pd
+import numpy as np
+
+# STEP 1: Load the cleaned CSV data file (confirm it's in the same folder)
+wells_df = pd.read_csv("spe_africa_dseats_datathon_2025_wells_dataset.csv")
+reservoir_df = pd.read_csv("reservoir_info.csv")
+
+# Clean numeric reservoir data for consistency and computations
+reservoir_numeric_cols = [
+    'Initial Reservoir Pressure (PSI)',
+    'Bubble Point Pressure (PSI)',
+    'Current Average Reservoir Pressure (PSI)',
+    'Solution Gas-Oil-Ratio (SCF/BBL)',
+    'Formation Volume Factor (RB/STB)'
+]
+
+for col in reservoir_numeric_cols:
+    reservoir_df[col] = (
+        reservoir_df[col]
+        .astype(str)
+        .str.replace(",", "")
+        .str.replace('"', "")
+        .replace("NA", np.nan)
+        .astype(float)
+    )
+
+# Clean and convert well-level numeric data
+wells_numeric_cols = [
+    'BOTTOMHOLE_FLOWING_PRESSURE (PSI)',
+    'DOWNHOLE_TEMPERATURE (deg F)',
+    'ANNULUS_PRESS (PSI)',
+    'CHOKE_SIZE (%)',
+    'WELL_HEAD_PRESSURE (PSI)',
+    'WELL_HEAD_TEMPERATURE (deg F)',
+    'CUMULATIVE_OIL_PROD (STB)',
+    'CUMULATIVE_FORMATION_GAS_PROD (MSCF)',
+    'CUMULATIVE_TOTAL_GAS_PROD (MSCF)',
+    'CUMULATIVE_WATER_PROD (BBL)',
+    'ON_STREAM_HRS'
+]
+
+for col in wells_numeric_cols:
+    wells_df[col] = (
+        wells_df[col]
+        .astype(str)
+        .str.replace(",", "")
+        .str.replace('"', "")
+        .replace("NA", np.nan)
+        .astype(float)
+    )
+
+# Ensure correct parsing of production dates (format = dd-mmm-yy)
+wells_df["PROD_DATE"] = pd.to_datetime(wells_df["PROD_DATE"], format="%d-%b-%y", errors="coerce")
+
+# Isolate the first 20 wells for focused analysis
+well_names_20 = wells_df["WELL_NAME"].dropna().unique()[:20]
+wells_df_top20 = wells_df[wells_df["WELL_NAME"].isin(well_names_20)].copy()
+
+# View status
+print("Step 1 completed successfully. Data cleaned and ready for analysis.")
+print(f"Total unique wells loaded: {len(well_names_20)}")
+print("Here’s a preview of the parsed and cleaned data:")
+print(wells_df_top20.head(3))
