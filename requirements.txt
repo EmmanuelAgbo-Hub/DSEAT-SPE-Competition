@@ -8,3 +8,4 @@ statsmodels==0.15.0
 # Interactive Environment
 jupyterlab==4.4.4
 notebook==7.4.4
+
